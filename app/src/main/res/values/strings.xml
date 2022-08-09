@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Shared Preferences</string>
+    <string name="label_name">Nome</string>
+    <string name="label_treatment">Tratamento</string>
+    <string name="btn_save">Salvar Saudação</string>
+    <string name="btn_show">Exibir Saudação</string>
+    <string-array name="treatment">
+        <item>Sr</item>
+        <item>Sra</item>
+        <item>Dr</item>
+        <item>Dra</item>
+        <item>Sem tratamento</item>
+    </string-array>
+</resources>
