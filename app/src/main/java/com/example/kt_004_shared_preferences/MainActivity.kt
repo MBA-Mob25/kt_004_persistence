@@ -4,10 +4,13 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.FileNotFoundException
+import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,20 +27,27 @@ class MainActivity : AppCompatActivity() {
 
     // Função responsável por salvar os dados
     private fun onSave() {
-        // Carregando a biblioteca de preferences nativa do android
-        val prefs = this.getSharedPreferences("storageTreatment", Context.MODE_PRIVATE)
-        // Pegando o objeto responsável pela edição dos dados dentro das preferencias do sistema
-        val editor = prefs.edit()
-
-        // Adicionando os dados preenchidos pelo usuário
-        editor.putString("name", inputName.text.toString())
-        editor.putString("treatment", listTreatment.selectedItem.toString())
-
-        // Aplicando os dados de preferencia / salvando na memória
-        editor.apply()
-
-        // Exibindo uma mensagem para o usuário dizendo que tudo foi salvo com sucesso
+        val data = inputName.text.toString() + ":" + listTreatment.selectedItem.toString()
+        saveFile("treatment", data);
         Toast.makeText(this, "Dados salvos com sucesso", Toast.LENGTH_SHORT).show();
+    }
+
+    // Função de apoio a função de salvar dados, esta função tem como objetivo criar o arquivo e adicionar os dados dentro dele
+    private fun saveFile(filename: String, data: String) {
+        try {
+            // Criando a instancia do arquivo para podermos gradas os dados
+            val fs = openFileOutput(filename, MODE_PRIVATE)
+            // Escrevendo os dados em forma de bits no arquivo criado
+            fs.write(data.toByteArray())
+            // Após finalizar o arquivo, vamos fecha-lo
+            fs.close()
+        } catch (e: FileNotFoundException) {
+            // Em caso de erro do tipo arquivo não localizado, vamos emitit um log
+            Log.i("saveFile", "FileNotFoundException")
+        } catch (e: IOException) {
+            // Em caso de um erro generico, vamos emitir outro log
+            Log.i("saveFile", "IOException")
+        }
     }
 
     // Função responsável pela navegação até a exibição da tela de saudação
