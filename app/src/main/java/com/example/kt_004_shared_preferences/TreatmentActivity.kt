@@ -1,7 +1,9 @@
 package com.example.kt_004_shared_preferences
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.kt_004_shared_preferences.db.DatabaseManager
 import kotlinx.android.synthetic.main.activity_treatment.*
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -14,20 +16,32 @@ class TreatmentActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_treatment)
+
+        // Aqui estamos instanciando a conexão com o banco de dados
+        val db = DatabaseManager(this, "TREATMENT")
+
         // Chamando a função que será responsável por carregar os dados salvos
-        loadDataFile()
+        loadDataFile(db)
     }
 
     // Função que vai carregar os dados salvos pelo usuários
-    private fun loadDataFile() {
-        // Executando função de apoio para carregar os dados salvos em arquivo
-        val data = recoveryData("treatment")
-        // Como salvamos os dados separados por ":" vamos separa-los para termos os dados definidos
-        val tokenizer = StringTokenizer(data, ":")
-        // Pegando o nome, primeiro dado salvo no arquivo
-        val name = if (tokenizer.hasMoreTokens()) tokenizer.nextToken() else "Sem nome"
-        // Pegando o tratamento, segundo dado salvo no arquivo
-        val treatment = if (tokenizer.hasMoreTokens()) tokenizer.nextToken() else "Sem tratamento"
+    @SuppressLint("Range")
+    private fun loadDataFile(db: DatabaseManager) {
+        // Criando as variavéis para preenchimento dos dados que serão carregados no banco de dados
+        var name = ""
+        var treatment = ""
+
+        // Resgatando os dados existente no banco de dados
+        val cursor = db.select()
+        // Caso existe dados na tabela, vamos preencher os dados nas variaveis criados
+        if (cursor.count > 0) {
+            // Carregando o primeiro registro da listagem
+            cursor.moveToFirst()
+            // Pegando o dado "Name" salvado no banco de dados
+            name = cursor.getString(cursor.getColumnIndex("NAME"))
+            // Pegando o dado "Tratamento" salvado no banco de dados
+            treatment = cursor.getString(cursor.getColumnIndex("TREATMENT"))
+        }
 
         // Vamos verificar se exite um tratamento configurado
         if (treatment == "Sem tratamento") {

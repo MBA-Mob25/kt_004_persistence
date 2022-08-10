@@ -1,12 +1,12 @@
 package com.example.kt_004_shared_preferences
 
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.example.kt_004_shared_preferences.db.DatabaseManager
 
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.FileNotFoundException
@@ -18,36 +18,31 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // Aqui estamos instanciando a conexão com o banco de dados
+        val db = DatabaseManager(this, "TREATMENT")
+
         // Vamos configurar as funções que serão executadas na tela principal
         // Neste caso, ao clicar vamos salvar os dados
-        btnSave.setOnClickListener(View.OnClickListener { onSave() });
+        btnSave.setOnClickListener(View.OnClickListener { onSave(db) });
         // Neste caso, ao clicar vamos carregar outra activity e mostrar o resultado
         btnShow.setOnClickListener(View.OnClickListener { onShow() })
     }
 
     // Função responsável por salvar os dados
-    private fun onSave() {
-        val data = inputName.text.toString() + ":" + listTreatment.selectedItem.toString()
-        saveFile("treatment", data);
-        Toast.makeText(this, "Dados salvos com sucesso", Toast.LENGTH_SHORT).show();
-    }
+    private fun onSave(db: DatabaseManager) {
+        // Carregando o nome preenchido
+        val name = inputName.text.toString()
+        // Carregando o tratamento selecionado
+        val treatment = listTreatment.selectedItem.toString()
 
-    // Função de apoio a função de salvar dados, esta função tem como objetivo criar o arquivo e adicionar os dados dentro dele
-    private fun saveFile(filename: String, data: String) {
-        try {
-            // Criando a instancia do arquivo para podermos gradas os dados
-            val fs = openFileOutput(filename, MODE_PRIVATE)
-            // Escrevendo os dados em forma de bits no arquivo criado
-            fs.write(data.toByteArray())
-            // Após finalizar o arquivo, vamos fecha-lo
-            fs.close()
-        } catch (e: FileNotFoundException) {
-            // Em caso de erro do tipo arquivo não localizado, vamos emitit um log
-            Log.i("saveFile", "FileNotFoundException")
-        } catch (e: IOException) {
-            // Em caso de um erro generico, vamos emitir outro log
-            Log.i("saveFile", "IOException")
-        }
+        // Deletando o registro existente
+        db.delete()
+        // Salvando os novos dados preenchidos pelo usuario
+        db.save(1,name, treatment)
+
+        // Exibindo uma mensagem de sucesso para o usuário
+        Toast.makeText(this, "Dados salvos com sucesso", Toast.LENGTH_SHORT).show();
     }
 
     // Função responsável pela navegação até a exibição da tela de saudação
