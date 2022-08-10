@@ -15,29 +15,29 @@ Ao criar essa classe, precisamos configuras as funções obrigatórias chamadas:
 
 ```kotlin
 override fun onCreate(p0: SQLiteDatabase?) {
-        p0?.execSQL(
-            "CREATE TABLE TREATMENT(" +
-                "ID INT NOT NULL," +
-                "NAME VARCHAR(45) NOT NULL," +
-                "TREATMENT VARCHAR(45) NOT NULL," +
-                "PRIMARY KEY (ID)" +
-            ")"
-        )
-    }
+    p0?.execSQL(
+        "CREATE TABLE TREATMENT(" +
+            "ID INT NOT NULL," +
+            "NAME VARCHAR(45) NOT NULL," +
+            "TREATMENT VARCHAR(45) NOT NULL," +
+            "PRIMARY KEY (ID)" +
+        ")"
+    )
+}
 ```
 
 ```kotlin
-    override fun onUpgrade(p0: SQLiteDatabase?, p1: Int, p2: Int) {
-        p0?.execSQL("DROP TABLE IF EXISTS TREATMENT")
-        p0?.execSQL(
-            "CREATE TABLE TREATMENT(" +
-                "ID INT NOT NULL," +
-                "NAME VARCHAR(45) NOT NULL," +
-                "TREATMENT VARCHAR(45) NOT NULL," +
-                "PRIMARY KEY (ID)" +
-            ")"
-        )
-    }
+override fun onUpgrade(p0: SQLiteDatabase?, p1: Int, p2: Int) {
+    p0?.execSQL("DROP TABLE IF EXISTS TREATMENT")
+    p0?.execSQL(
+        "CREATE TABLE TREATMENT(" +
+            "ID INT NOT NULL," +
+            "NAME VARCHAR(45) NOT NULL," +
+            "TREATMENT VARCHAR(45) NOT NULL," +
+            "PRIMARY KEY (ID)" +
+        ")"
+    )
+}
 ```
 
 Uma vez tendo a classe de gerencia dos dados, podemos instancia-la da seguinte forma
